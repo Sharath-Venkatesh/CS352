@@ -1,0 +1,79 @@
+version: '3.5' 
+
+services:
+
+
+  rabbitmq:
+
+    image: rabbitmq:3.8.3-alpine
+    container_name: rabbitmq
+    hostname: rabbitmq
+    networks: 
+     - my_net
+
+  zoo:
+    image: zookeeper
+    restart: on-failure
+    hostname: zoo
+    ports:
+      - 2181:2181
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888;2181
+    networks:
+    - my_net
+
+  orchestrator:
+  
+    build: orchestrator
+    image: python:3.8-alpine
+    container_name: orchestrator
+    restart: on-failure
+    command: sh -c "sleep 60 && python3 -u o.py"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  
+    restart: on-failure
+    ports:
+      - '80:80'
+    networks:
+    - my_net
+    depends_on:
+    - rabbitmq
+    - zoo
+
+  master:
+  
+    build: worker
+    image: worker:latest
+    container_name: master
+    command: sh -c "sleep 65 && python3 worker.py"
+    pid: "host"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+    - orchestrator
+    - rabbitmq
+    - zoo
+    networks:
+    - my_net
+
+  slave:
+    image: worker:latest
+    container_name: worker0
+    command: sh -c "sleep 68 && python3 worker.py"
+    pid: "host"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+    - orchestrator
+    - rabbitmq
+    - master
+    - zoo
+    networks: 
+    - my_net
+
+
+networks:
+    my_net: 
+      name: cont_net

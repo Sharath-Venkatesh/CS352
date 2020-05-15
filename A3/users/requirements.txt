@@ -1,0 +1,6 @@
+flask
+requests
+SQLAlchemy
+Flask-SQLAlchemy
+flask-cors
+
