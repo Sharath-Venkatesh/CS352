@@ -1,8 +1,7 @@
-# Final Project: Mini DBaaS for Rideshare
+# Final Project: RideShare App: Database as a Service
 ###  17CS352 Cloud Computing, PES University
 &nbsp;
-The final project is focused on building a fault tolerant, highly available database as a service for
-the RideShare application. You will only be working with Amazon EC2 instances.
+This project develops a fault-tolerant and highly available Database as a Service (DBaaS) tailored for the RideShare application, ensuring reliable, real-time functionality.
 ---
 ##### Architecture of DBaas:
   - ALB
